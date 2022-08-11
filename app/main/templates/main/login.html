@@ -1,0 +1,29 @@
+{%extends 'index.html'%}
+
+{%load static%}
+
+{%block extrahead%}
+<link rel="stylesheet" href="{%static 'main/login.css'%}">
+{%endblock%}
+
+{%block content%}
+
+<div class="auth-wrapper">
+    <div class="auth-header">
+        <h1 class="auth-header-title">Login</h1>
+    </div>
+    <div class="auth-content">
+        <form method="post">
+            {%csrf_token%}
+            {%for f in form%}
+                <div class="auth-form-group"><lable class="auth-form-label" for="{{f.id_for_label}}">{{f.label}}:</lable>{{f}}</div>
+            {%endfor%}
+            <button class="submit-button" type="submit">Sing In</button>
+        </form>
+    </div>
+    <div class="auth-footer">
+        <p>Don't have an account? <a href="https://t.me/TT_task_registerBot">Create account</a></p>
+    </div>
+</div>
+
+{%endblock%}

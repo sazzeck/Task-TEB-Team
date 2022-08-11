@@ -1,0 +1,14 @@
+[flake8]
+
+ignore =
+    F403,   # unable to detect undefined names
+
+max-complexity = 15
+
+max-function-length = 120
+
+max-line-length = 120
+
+accept-encodings = utf-8
+
+docstring-convention = black
