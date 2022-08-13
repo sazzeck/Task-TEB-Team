@@ -25,13 +25,28 @@ class AirtableUsers(Airtable):
 
     def get_user(self, user_id):
         record = self.search("tg_id", user_id)
-        user = {
-            "tg_id": record[0].get("fields").get("tg_id"),
-            "username": record[0].get("fields").get("username"),
-            "firstname": record[0].get("fields").get("firstname"),
-            "password": record[0].get("fields").get("password")
-        }
-        return user
+        if record:
+            user = {
+                "tg_id": record[0].get("fields").get("tg_id"),
+                "username": record[0].get("fields").get("username"),
+                "firstname": record[0].get("fields").get("firstname"),
+                "password": record[0].get("fields").get("password")
+            }
+            return user
+
+    def user_is_created(self, user_id):
+        is_created = self.search("tg_id", user_id)
+        if is_created:
+            return True
+        else:
+            return False
+
+    def auth(self, username, password):
+        if username and password is not None:
+            username_check = (self.get_user(username).get("username") == username)
+            password_check = (self.get_user(username).get("password") == password)
+            if username_check and password_check:
+                return {"username": username, "password": password}
 
     def get_user_id(self, user_username):
         return self.get_user(user_username).get("tg_id")
