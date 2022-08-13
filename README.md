@@ -31,6 +31,8 @@ AIRTABLE_TABLE_NAME = str:<AIRTABLE_TABLE_NAME>
 After cloning and setting `.env`
 ```
 cd app
+./manage.py makemigrations
+./manage.py migrate
 ```
 
 Can run
