@@ -27,10 +27,10 @@ class AirtableUsers(Airtable):
         record = self.search("tg_id", user_id)
         if record:
             user = {
-                "tg_id": record[0].get("fields").get("tg_id"),
-                "username": record[0].get("fields").get("username"),
-                "firstname": record[0].get("fields").get("firstname"),
-                "password": record[0].get("fields").get("password")
+                "tg_id": record[0].get("fields").get("tg_id", "unknown"),
+                "username": record[0].get("fields").get("username", "unknown"),
+                "firstname": record[0].get("fields").get("firstname", "unknown"),
+                "password": record[0].get("fields").get("password", "unknown")
             }
             return user
 
@@ -42,7 +42,7 @@ class AirtableUsers(Airtable):
             return False
 
     def auth(self, username, password):
-        if username and password is not None:
+        if username and password:
             username_check = (self.get_user(username).get("username") == username)
             password_check = (self.get_user(username).get("password") == password)
             if username_check and password_check:
