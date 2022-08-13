@@ -11,6 +11,8 @@ import aiogram.utils.markdown as md
 from main.models import User
 from django.contrib.auth.hashers import make_password
 
+from data import AirtableUsers
+
 from utils import Config
 
 
@@ -64,6 +66,7 @@ class Form(StatesGroup):
 
 
 markup = ReplyKeyboardRemove()
+user_table = AirtableUsers()
 
 
 async def cmd_start(message: Message):
@@ -71,7 +74,7 @@ async def cmd_start(message: Message):
         md.text(
             md.text(md.bold("Registration")),
             md.text("Username is set automatically."),
-            sep="\n"
+            sep="\n",
         ),
         reply_markup=markup,
         parse_mode=ParseMode.MARKDOWN,
@@ -88,12 +91,18 @@ async def registration(message: Message, state: FSMContext):
     async with state.proxy() as data:
         data["username"] = message.from_user.username
         data["password"] = message.text
-        user, is_created = await add_user(
-            user_id=message.from_user.id,
-            username=message.from_user.username,
-            password=make_password(data["password"]),
-        )
-        if is_created:
+        if not user_table.user_is_created(message.from_user.id):
+            user, _ = await add_user(
+                user_id=message.from_user.id,
+                username=message.from_user.username,
+                password=make_password(data["password"]),
+            )
+            user_table.user_create(
+                tg_id=message.from_user.id,
+                username=message.from_user.username,
+                firstname=message.from_user.first_name,
+                password=make_password(data["password"]),
+            )
             await message.answer(
                 md.text(
                     md.text(md.bold("Registration Completed")),

@@ -9,10 +9,15 @@
 {%block content%}
 <div class="main-wrapper">
     <div class="main-header">
-        <p class="username">{{request.user.username}}</p>
+        <a class="username" href="https://t.me/{{request.user.username}}">Telegram Profile</a>
         {%if user.is_authenticated%}
             <a class="logout-button" href="{%url 'logout'%}">Log Out</a>
         {%endif%}
+    </div>
+    <div class="user_info">
+        <p>Id: {{user_id}}</p>
+        <p>Username: {{username}}</p>
+        <p>Firstname: {{firstname}}</p>
     </div>
 </div>
 {%endblock%}

@@ -33,9 +33,9 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
 
-    # if "runserver" in sys.argv:
-    #     runserver.default_port = settings.RUN_SERVER_PORT
-    #     return run_app()
+    if "runserver" in sys.argv:
+        runserver.default_port = settings.RUN_SERVER_PORT
+        return run_app()
 
     execute_from_command_line(sys.argv)
 
