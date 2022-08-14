@@ -9,7 +9,7 @@
 {%block content%}
 <div class="main-wrapper">
     <div class="main-header">
-        <a class="username" href="https://t.me/{{request.user.username}}">Telegram Profile</a>
+        <a class="username" href="https://t.me/{{request.session.username}}">Telegram Profile</a>
         {%if request.session.is_login%}
             <a class="logout-button" href="{%url 'logout'%}">Log Out</a>
         {%endif%}

@@ -74,7 +74,7 @@ async def registration(message: Message, state: FSMContext):
     async with state.proxy() as data:
         data["username"] = message.from_user.username
         data["password"] = message.text
-        if not user_table.user_is_created(message.from_user.id):
+        if not user_table.user_is_created(message.from_user.username):
             user_table.user_create(
                 tg_id=message.from_user.id,
                 username=message.from_user.username,
