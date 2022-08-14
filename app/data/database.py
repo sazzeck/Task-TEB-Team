@@ -1,7 +1,5 @@
 from airtable import Airtable
 
-from django.contrib.auth.hashers import make_password
-
 from utils import Config
 
 
@@ -18,13 +16,13 @@ class AirtableUsers(Airtable):
             "tg_id": tg_id,
             "username": username,
             "firstname": firstname,
-            "password": make_password(password),
+            "password": password,
         }
 
         return self.insert(fields=user)
 
-    def get_user(self, user_id):
-        record = self.search("tg_id", user_id)
+    def get_user(self, user_username):
+        record = self.search("username", user_username)
         if record:
             user = {
                 "tg_id": record[0].get("fields").get("tg_id", "unknown"),
@@ -34,8 +32,8 @@ class AirtableUsers(Airtable):
             }
             return user
 
-    def user_is_created(self, user_id):
-        is_created = self.search("tg_id", user_id)
+    def user_is_created(self, user_username):
+        is_created = self.search("username", user_username)
         if is_created:
             return True
         else:
@@ -46,7 +44,9 @@ class AirtableUsers(Airtable):
             username_check = (self.get_user(username).get("username") == username)
             password_check = (self.get_user(username).get("password") == password)
             if username_check and password_check:
-                return {"username": username, "password": password}
+                return True
+            else:
+                return False
 
     def get_user_id(self, user_username):
         return self.get_user(user_username).get("tg_id")

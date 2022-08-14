@@ -1,15 +1,9 @@
-from typing import Tuple
-from asgiref.sync import sync_to_async
-
 from aiogram import Bot, Dispatcher, executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove, ParseMode
 import aiogram.utils.markdown as md
-
-from main.models import User
-from django.contrib.auth.hashers import make_password
 
 from data import AirtableUsers
 
@@ -49,17 +43,6 @@ class MyBot:
         pass
 
 
-@sync_to_async
-def add_user(user_id: int, username: str, password: str) -> Tuple[User, bool]:
-    return User.objects.get_or_create(
-        id=user_id,
-        defaults={
-            "username": username,
-            "password": password,
-        },
-    )
-
-
 class Form(StatesGroup):
     username = State()
     password = State()
@@ -92,16 +75,11 @@ async def registration(message: Message, state: FSMContext):
         data["username"] = message.from_user.username
         data["password"] = message.text
         if not user_table.user_is_created(message.from_user.id):
-            user, _ = await add_user(
-                user_id=message.from_user.id,
-                username=message.from_user.username,
-                password=make_password(data["password"]),
-            )
             user_table.user_create(
                 tg_id=message.from_user.id,
                 username=message.from_user.username,
                 firstname=message.from_user.first_name,
-                password=make_password(data["password"]),
+                password=data["password"],
             )
             await message.answer(
                 md.text(

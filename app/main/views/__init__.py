@@ -1,9 +1,9 @@
-from .login import LoginView
+from .login import UserLoginView
 from .logout import LogoutUserView
 from .main import MainView
 
 __all__ = [
-    "LoginView",
+    "UserLoginView",
     "LogoutUserView",
     "MainView"
 ]

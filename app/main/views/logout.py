@@ -1,7 +1,9 @@
 from django.contrib.auth.views import LogoutView
 
-from django.contrib.auth.mixins import LoginRequiredMixin
 
-
-class LogoutUserView(LoginRequiredMixin, LogoutView):
+class LogoutUserView(LogoutView):
     next_page = "login"
+
+    def get_default_redirect_url(self):
+        self.request.session["is_login"] = False
+        return super().get_default_redirect_url()

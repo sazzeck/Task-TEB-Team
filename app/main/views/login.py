@@ -1,17 +1,31 @@
-from django.contrib.auth.views import LoginView
-from django.urls import reverse_lazy
+from django.shortcuts import render, redirect
+from django.views.generic.edit import View
+from django.contrib.auth.views import RedirectURLMixin
+from django.urls import reverse
 
 from main.forms import LoginForm
 
+from data import AirtableUsers
 
-class LoginView(LoginView):
-    form_class = LoginForm
-    template_name = "main/login.html"
+users = AirtableUsers()
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["title"] = "Login"
-        return context
 
-    def get_success_url(self):
-        return reverse_lazy("main")
+class UserLoginView(RedirectURLMixin, View):
+    template = "main/login.html"
+    form = LoginForm
+
+    def get(self, request):
+        return render(request, self.template, {"form": self.form, "title": "Login"})
+
+    def post(self, request):
+        form = self.form(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password"]
+            if users.user_is_created(username):
+                if users.auth(username, password):
+                    request.session["is_login"] = True
+                    request.session["username"] = users.get_username(username)
+                    return redirect(reverse("main"))
+            return render(request, "main/login.html", {"form": form})
+        return render(request, "main/login.html", {"form": form})
